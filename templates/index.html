@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScamShield | Scam Message Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <a href="/" class="logo">🛡️ ScamShield</a>
+        <span class="tagline">Your digital safety companion</span>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <span class="badge">SMART MESSAGE ANALYSIS</span>
+            <h1>Think before you <span>click.</span></h1>
+            <p>Analyze suspicious messages, job offers, and emails to identify common scam warning signs.</p>
+        </section>
+
+        <section class="analyzer card">
+            <h2>🔍 Analyze a Message</h2>
+            <p class="muted">Paste the message you want to check below.</p>
+
+            <form method="POST">
+                <label for="message">Suspicious message</label>
+                <textarea
+                    id="message"
+                    name="message"
+                    rows="7"
+                    placeholder="Example: Congratulations! You have been selected for a job. Pay a refundable registration fee immediately..."
+                    required
+                >{{ message }}</textarea>
+
+                <div class="form-footer">
+                    <span class="muted">Never enter your real passwords or OTPs.</span>
+                    <button type="submit">Analyze Message →</button>
+                </div>
+            </form>
+        </section>
+
+        {% if result %}
+        <section class="results card">
+            <h2>Analysis Report</h2>
+
+            <div class="risk-summary">
+                <div class="score-circle">
+                    <strong>{{ result.score }}%</strong>
+                    <span>Risk score</span>
+                </div>
+
+                <div>
+                    <span class="muted">Assessed risk level</span>
+                    <h3 class="risk-{{ result.risk|lower }}">{{ result.risk }} Risk</h3>
+                    <p>
+                        {% if result.findings %}
+                            Found {{ result.findings|length }} matching warning sign(s).
+                        {% else %}
+                            No configured warning phrases were detected.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <h3>🚩 Detected warning signs</h3>
+
+            {% if result.findings %}
+                <div class="findings">
+                    {% for finding in result.findings %}
+                    <div class="finding">
+                        <span class="finding-icon">⚠️</span>
+                        <div>
+                            <strong>{{ finding.category }}</strong>
+                            <p>Matched phrase: <code>{{ finding.phrase }}</code></p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="safe-message">No configured warning phrases matched. This does not guarantee that the message is safe.</p>
+            {% endif %}
+
+            <div class="advice">
+                <strong>💡 Safety advice</strong>
+                <p>Do not pay unexpected fees, share OTPs or passwords, or click suspicious links. Verify job offers through the company's official website.</p>
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="tips">
+            <h2>Stay one step ahead</h2>
+            <div class="tips-grid">
+                <article class="tip card">
+                    <span>💳</span>
+                    <h3>Unexpected payments</h3>
+                    <p>Be cautious when asked to pay registration or processing fees to secure a job or prize.</p>
+                </article>
+
+                <article class="tip card">
+                    <span>⏰</span>
+                    <h3>Urgent demands</h3>
+                    <p>Scammers may pressure you to act immediately without time to verify the claim.</p>
+                </article>
+
+                <article class="tip card">
+                    <span>🔐</span>
+                    <h3>Protect your details</h3>
+                    <p>Never share your OTP, password, or banking credentials with unknown people.</p>
+                </article>
+            </div>
+        </section>
+
+        <p class="disclaimer">
+            Disclaimer: ScamShield uses basic phrase matching. Its score is a heuristic, not a probability.
+            It may miss scams or flag legitimate messages. Always verify independently.
+        </p>
+    </main>
+
+    <footer>
+        <p>🛡️ ScamShield · Built with Python and Flask</p>
+    </footer>
+</body>
+</html>
+
